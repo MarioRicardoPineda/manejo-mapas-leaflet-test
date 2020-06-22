@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manejo de mapas | leafletjs</title>
+
+  <!-- Hola de estilos de leafletjs -->
+  <link rel="stylesheet" 
+    href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+
+    <style>
+
+      #mapid {
+        height: 500px;
+      }
+      .btn-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #changeMap {
+        padding: 1rem;
+        font-size: 16px;
+        border:none;
+        border-radius: 5px;
+        color: #fff;
+        background-color: deeppink;
+        margin-top: 1rem;
+        transition: .4s;
+        width: 30%;
+      }
+      #changeMap:hover{
+        background-color: rgb(207, 17, 119);
+      }
+      #changeMap:focus{
+        outline: none;
+      }
+      #changeMap:active{
+        transform: scale(.96);
+      }
+
+    </style>
+</head>
+<body>
+
+  <div id="mapid"></div>
+ <div class="btn-container">
+  <button id="changeMap" type="button">
+    Cambia a vista satelital
+  </button>
+ </div>
+  
+  <!-- Scripts de leafletjs -->
+   <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script 
+  src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+  integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin="">
+</script>
+
+<script>
+  // lngitud y latitud y el zoom
+  // Para el mapa
+  let mymap = L.map('mapid').setView([13.7187958, -89.179598], 17) ;
+  // Para el marcador
+  let marker = L.marker([13.718368, -89.182516]).addTo(mymap);
+  // para una ventana emergente en el marcador
+  marker.bindPopup("Colonia<br><b>Panamá</b>").openPopup();
+
+//   function onMapClick(e) {
+//     alert("You clicked the map at " + e.latlng);
+// }
+
+// mymap.on('click', onMapClick);
+
+// Aqui pon tu token
+  let apikey = 'tu-propio-token'
+
+  const btnChange = document.getElementById('changeMap')
+  let vista
+
+  const options = vista => {
+    L.tileLayer(`https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${apikey}`, {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 20,
+    id: vista,
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: apikey
+  }).addTo(mymap);
+  }
+
+  window.addEventListener('DOMContentLoaded', _ => {
+    vista = 'mapbox/streets-v11'
+    options(vista)
+  })
+
+  btnChange.addEventListener('click', _ => {
+
+    if (vista === 'mapbox/streets-v11') {
+      vista = 'mapbox/satellite-v9'
+      btnChange.textContent = 'Cambiar a vista street'
+      options(vista)
+    }else {
+      vista = 'mapbox/streets-v11'
+      btnChange.textContent = 'Cambiar a vista satelital'
+      options(vista)
+    }
+
+  })
+
+
+</script>
+</body>
+</html>
